@@ -1,50 +1,41 @@
-# MP269 findings --- fill in every value, keep every key.
-# The marking tool reads this file. Write null only where the comment says so.
-# Use the exact column names and group values from your data files.
-
-group_id: "G203"          # your group id, e.g. "G042"
-problem_id: "MP269"
-
+group_id: G203
+problem_id: MP269
 data_issues:
-  # For each of the 7 kinds: present: true or false.
-  # If present is false, leave the other values as null.
   leaking_column:
     present: true
-    column: "gb_from_monthly_bill"  # the column that must not be used as a feature
+    column: gb_from_monthly_bill
   unit_mixup:
     present: false
-    column: null           # the column recorded in a different unit
-    group_value: null      # the value of circle whose rows are affected
-    factor: null           # wrong value = right value x factor
+    column: null
+    group_value: null
+    factor: null
   sentinel_value:
     present: true
-    column: "video_minutes"
-    value: -999            # the special number typed instead of a blank
-    count: 51              # how many rows have it
+    column: video_minutes
+    value: -999
+    count: 51
   duplicate_rows:
     present: true
-    count: 53              # number of EXTRA copies (rows you would delete)
+    count: 53
   stuck_sensor:
     present: true
-    column: "wifi_hours"
-    start_date: "2026-04-12"  # first date with the stuck value, YYYY-MM-DD
-    end_date: "2026-04-25"    # last date with the stuck value, YYYY-MM-DD
+    column: wifi_hours
+    start_date: '2026-04-12'
+    end_date: '2026-04-25'
   target_typos:
     present: true
-    count: 8               # rows whose target was typed 10 times too big
+    count: 8
   spelling_variants:
     present: false
     column: null
-    true_levels: null      # how many real categories there are after cleaning
-
+    true_levels: null
 tracking:
   experiment_name: null
-  best_run_id: null        # the MLflow run id of your v1 model
+  best_run_id: null
   registered_model_name: null
   champion_version: null
-
 monitoring:
-  psi:                     # cleaned train.csv vs later.csv, 10 bins
+  psi:
     age: null
     screen_hours: null
     apps_installed: null
@@ -52,11 +43,43 @@ monitoring:
     video_minutes: null
     wifi_hours: null
   most_drifted_feature: null
-  mae_by_group:            # v1 on later.csv, per value of circle
-    'Urban': null
-    'Semi-urban': null
-    'Rural': null
+  mae_by_group:
+    Urban: null
+    Semi-urban: null
+    Rural: null
   worst_served_group: null
-  mae_v1_on_check: null    # v1 on the last 30% of later.csv (by date)
-  mae_v2_on_check: null    # v2 on the same rows
-  decision: null           # promote or keep
+  mae_v1_on_check: null
+  mae_v2_on_check: null
+  decision: null
+stage2:
+  status: completed
+  cleaning:
+    original_rows: 1053
+    cleaned_rows: 1000
+    duplicates_removed: 53
+    stuck_sensor_values_replaced: 86
+    target_typos_fixed: 8
+  training:
+    model: RandomForestRegressor
+    training_rows: 1000
+    evaluation_rows: 300
+    target: gb_per_day
+  mlflow:
+    tracking_uri: sqlite:///mlflow.db
+    experiment_name: G203_MP269_Stage2
+    data_sha256: e789e2a4931eb7a83019dc9fab3030c94eed443e4f3843ee186ca94568bbde96
+    runs: 3
+    results:
+      random_forest_200: 1.6160431833333344
+      random_forest_300: 1.6223527953067116
+      random_forest_400: 1.6443421458774685
+    best_run_id: 9384c81c95324054aa5004611372f0de
+    best_mae: 1.6160431833333344
+    registered_model: G203_MP269_v1
+    model_version: 1
+    alias: champion
+  model_file: models/model.joblib
+  pytest:
+    tests: 3
+    passed: 3
+    failed: 0
