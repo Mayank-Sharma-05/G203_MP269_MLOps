@@ -1,0 +1,14 @@
+data:
+  raw_dir: data/raw
+  train_file: train.csv
+  later_file: later.csv
+  holdout_file: holdout_features.csv
+
+target:
+  column: gb_per_day
+
+group:
+  column: circle
+
+model:
+  random_state: 42
